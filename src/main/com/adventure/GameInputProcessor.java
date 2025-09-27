@@ -4,6 +4,7 @@ import main.com.adventure.settings.Command;
 import main.com.adventure.settings.CommandConstants;
 
 import java.util.Locale;
+import java.util.Scanner;
 
 public class GameInputProcessor {
 
@@ -13,7 +14,8 @@ public class GameInputProcessor {
      */
     public String prompt() {
         System.out.println("Enter your next command:");
-        return "";
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
     }
 
     /**
@@ -29,7 +31,12 @@ public class GameInputProcessor {
      * @return - the Command object with the proper verb and blank object
      */
     private Command buildSimpleCommand(String input) {
-        return new Command("");
+        String verb = input.trim().split("\\s+")[0];
+        // Special handling for inventory command to match CommandVerb.INVENTORY
+        if (verb.equalsIgnoreCase("inventory")) {
+            verb = "INVENTORY";
+        }
+        return new Command(verb, "");
     }
 
     /**
@@ -52,7 +59,15 @@ public class GameInputProcessor {
      * @return - the Command object with the proper verb and object
      */
     private Command buildCommandWithObject(String input) {
-        return new Command("", "");
+        String[] parts = input.trim().split("\\s+", 2);
+        if (parts.length == 2) {
+            String verb = parts[0];
+            String object = parts[1].trim();
+            return new Command(verb, object);
+        } else {
+            String verb = parts[0];
+            return new Command(verb, "");
+        }
     }
 
 
